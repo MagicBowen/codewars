@@ -16,20 +16,9 @@ public class SweepingRobot {
     }
 
     public void execute(Instruction instruction) {
-        switch (instruction) {
-            case FORWARD:
-                position = position.forward(direction.getUnit());
-                break;
-            case BACKWARD:
-                position = position.backward(direction.getUnit());
-                break;
-            case TURN_LEFT:
-                direction = direction.leftSide();
-                break;
-            case TURN_RIGHT:
-                direction = direction.rightSide();
-                break;
-        }
+        instruction.run(position, direction);
+        position = instruction.getPosition();
+        direction = instruction.getDirection();
     }
 
     @Override

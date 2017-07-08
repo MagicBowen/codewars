@@ -24,33 +24,39 @@ public class TestSweepingRobot {
 
     @Test()
     public void testMoveForward() {
-        robot.execute(Instruction.FORWARD);
+        robot.execute(new ForwardInstruction());
         assertRobot(0, 1, Direction.NORTH);
     }
 
     @Test()
     public void testMoveBackward() {
-        robot.execute(Instruction.BACKWARD);
+        robot.execute(new BackwardInstruction());
         assertRobot(0, -1, Direction.NORTH);
     }
 
     @Test()
     public void testTurnLeft() {
-        robot.execute(Instruction.TURN_LEFT);
+        robot.execute(new TurnLeftInstruction());
         assertRobot(0, 0, Direction.WEST);
     }
 
     @Test()
     public void testTurnRight() {
-        robot.execute(Instruction.TURN_RIGHT);
+        robot.execute(new TurnRightInstruction());
         assertRobot(0, 0, Direction.EAST);
     }
 
     @Test()
     public void testTurnRightAndForward() {
-        robot.execute(Instruction.TURN_RIGHT);
-        robot.execute(Instruction.FORWARD);
+        robot.execute(new TurnRightInstruction());
+        robot.execute(new ForwardInstruction());
         assertRobot(1, 0, Direction.EAST);
+    }
+
+    @Test()
+    public void testFowardsNStep() {
+        robot.execute(new FowardsInstruction(10));
+        assertRobot(0, 10, Direction.NORTH);
     }
 
     private SweepingRobot robot;
