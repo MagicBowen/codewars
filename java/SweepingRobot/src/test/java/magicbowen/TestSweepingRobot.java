@@ -55,8 +55,22 @@ public class TestSweepingRobot {
 
     @Test()
     public void testFowardsNStep() {
-        robot.execute(new FowardsInstruction(10));
+        robot.execute(new ForwardsInstruction(10));
         assertRobot(0, 10, Direction.NORTH);
+    }
+
+    @Test()
+    public void testRepeat() {
+        robot.execute(new RepeatInstruction(10, new ForwardInstruction()));
+        assertRobot(0, 10, Direction.NORTH);
+    }
+
+    @Test()
+    public void testComposite() {
+        CompositeInstruction instructions = new CompositeInstruction();
+        instructions.add(new RepeatInstruction(2, new TurnRightInstruction())).add(new ForwardsInstruction(5));
+        robot.execute(instructions);
+        assertRobot(0, -5, Direction.SOUTH);
     }
 
     private SweepingRobot robot;
