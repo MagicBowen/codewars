@@ -30,7 +30,7 @@ mvn -h
 #### setup a new project
 
 ```bash
-mvn archetype:generate -DgroupId=com.bowen -DartifactId=fizzbuzzwhizz -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+mvn archetype:generate -DgroupId=magicbowen -DartifactId=SweepingRobot -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 ```
 
 #### build
