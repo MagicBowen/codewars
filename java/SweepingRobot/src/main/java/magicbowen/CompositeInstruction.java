@@ -1,5 +1,6 @@
 package magicbowen;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -24,12 +25,14 @@ public class CompositeInstruction implements Instruction {
     }
 
     public Position getPosition() {
-        return instructions.lastElement().getPosition();
+        if(instructions.isEmpty()) throw new NullPointerException();
+        return instructions.get(instructions.size() - 1).getPosition();
     }
 
     public Direction getDirection() {
-        return instructions.lastElement().getDirection();
+        if(instructions.isEmpty()) throw new NullPointerException();
+        return instructions.get(instructions.size() - 1).getDirection();
     }
 
-    private Vector<Instruction> instructions = new Vector<Instruction>();
+    private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 }
