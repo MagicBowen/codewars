@@ -67,8 +67,8 @@ public class SweepingRobotTest {
 
     @Test()
     public void testComposite() {
-        CompositeInstruction instructions = new CompositeInstruction();
-        instructions.add(new RepeatInstruction(2, new TurnRightInstruction())).add(new ForwardsInstruction(5));
+        CompositeInstruction instructions = new CompositeInstruction( new RepeatInstruction(2, new TurnRightInstruction())
+                                                                    , new ForwardsInstruction(5));
         robot.execute(instructions);
         assertRobot(0, -5, Direction.SOUTH);
     }

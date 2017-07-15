@@ -6,13 +6,11 @@ import java.util.Vector;
  * Created by wangbo on 2017/7/9.
  */
 public class CompositeInstruction implements Instruction {
-    public CompositeInstruction() {
-        instructions = new Vector<Instruction>();
-    }
 
-    public CompositeInstruction add(Instruction instruction) {
-        instructions.add(instruction);
-        return this;
+    public CompositeInstruction(Instruction... instructions) {
+        for (Instruction instruction : instructions) {
+            this.instructions.add(instruction);
+        }
     }
 
     public void run(Position p, Direction d) {
@@ -33,5 +31,5 @@ public class CompositeInstruction implements Instruction {
         return instructions.lastElement().getDirection();
     }
 
-    private Vector<Instruction> instructions;
+    private Vector<Instruction> instructions = new Vector<Instruction>();
 }
