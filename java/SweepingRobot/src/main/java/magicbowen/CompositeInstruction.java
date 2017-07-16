@@ -9,9 +9,7 @@ import java.util.Vector;
 public class CompositeInstruction implements Instruction {
 
     public CompositeInstruction(Instruction... instructions) {
-        for (Instruction instruction : instructions) {
-            this.instructions.add(instruction);
-        }
+        this.instructions = instructions;
     }
 
     public void run(Position p, Direction d) {
@@ -25,14 +23,14 @@ public class CompositeInstruction implements Instruction {
     }
 
     public Position getPosition() {
-        if(instructions.isEmpty()) throw new NullPointerException();
-        return instructions.get(instructions.size() - 1).getPosition();
+        if(instructions == null) throw new NullPointerException();
+        return instructions[instructions.length - 1].getPosition();
     }
 
     public Direction getDirection() {
-        if(instructions.isEmpty()) throw new NullPointerException();
-        return instructions.get(instructions.size() - 1).getDirection();
+        if(instructions == null) throw new NullPointerException();
+        return instructions[instructions.length - 1].getDirection();
     }
 
-    private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+    private Instruction[] instructions;
 }
