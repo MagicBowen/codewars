@@ -1,7 +1,9 @@
 .DS_Store
 .vscode
-java/SweepingRobot/.idea/
-java/SweepingRobot/target/
+java/*/.idea/
+java/*/.project
+java/*/target/
+java/*/build/
 *.iml
 *.ipr
 *.iws
