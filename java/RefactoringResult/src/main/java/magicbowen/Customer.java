@@ -3,6 +3,10 @@ package magicbowen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+
 
 public class Customer {
     public Customer(String name) {
@@ -15,31 +19,25 @@ public class Customer {
 
     public String statement(StatementFormatter formatter) {
         formatter.onCustomer(getName());
-        for (Rental rental : rentals) {
-            formatter.onRental(rental.getMovie().getTitle(), rental.getCharge());
-        }
+        rentals.stream().forEach(rental -> formatter.onRental(rental.getMovie().getTitle(), rental.getCharge()));
         formatter.onTotal(getTotalCharge(), getTotalRenterPoints());
         return formatter.statement();
     }
 
-    private String getName() {
-        return name;
-    }
-
     private double getTotalCharge() {
-        double result = 0;
-        for (Rental rental : rentals) {
-            result += rental.getCharge();
-        }
-        return result;
+        return accumulate(0.0, rental -> rental.getCharge(), Double::sum);
     }
 
     private int getTotalRenterPoints() {
-        int result = 0;
-        for (Rental rental : rentals) {
-            result += rental.getPoints();
-        }
-        return result;
+        return accumulate(0, rental -> rental.getPoints(), Integer::sum);
+    }
+
+    private <T> T accumulate(T initial, Function<Rental, T> mapper, BinaryOperator<T> accumulator) {
+        return rentals.stream().map(mapper).reduce(initial, accumulator);
+    }
+
+    private String getName() {
+        return name;
     }
 
     private String name;
