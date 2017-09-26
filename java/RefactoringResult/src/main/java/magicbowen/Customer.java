@@ -13,14 +13,13 @@ public class Customer {
         rentals.add(rental);
     }
 
-    public String statement() {
-        String result = "Rental record for " + getName() + "\n";
+    public String statement(StatementFormatter formatter) {
+        formatter.onCustomer(getName());
         for (Rental rental : rentals) {
-            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(rental.getCharge()) + "\n";
+            formatter.onRental(rental.getMovie().getTitle(), rental.getCharge());
         }
-        result += "Amount owed is " + String.valueOf(getTotalCharge()) + "\n";
-        result += "You earned " + String.valueOf(getTotalRenterPoints()) + " frequent renter points\n";
-        return result;
+        formatter.onTotal(getTotalCharge(), getTotalRenterPoints());
+        return formatter.statement();
     }
 
     private String getName() {
