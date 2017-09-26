@@ -1,5 +1,6 @@
 package magicbowen;
 
+
 public class Movie {
     private String title;
     private MovieType type;

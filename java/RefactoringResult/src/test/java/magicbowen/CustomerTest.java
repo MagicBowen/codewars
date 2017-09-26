@@ -1,9 +1,8 @@
 package magicbowen;
 
+import magicbowen.testdoubles.SpyStatementFormatter;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
 
 import static magicbowen.MovieType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -49,7 +48,7 @@ public class CustomerTest {
 
     // More tests for all algorithms of different movie types
 
-    // Just one  end to end test for all process
+    // Just one end-to-end test to verify the relation of all processes
     @Test
     public void statement() {
         customer.addRental(new Rental(new Movie("A", NEW_RELEASE_TYPE), 5));
@@ -64,49 +63,5 @@ public class CustomerTest {
         assertThat(2.0, equalTo(formatter.getChargeOf("C")));
         assertThat(20.0, equalTo(formatter.getTotalCharge()));
         assertThat(4, equalTo(formatter.getTotalPoints()));
-    }
-}
-
-class SpyStatementFormatter implements StatementFormatter {
-    private String customerName;
-    private HashMap<String, Double> rentals = new HashMap<>();
-    private int totalPoints;
-    private double totalCharge;
-
-    @Override
-    public void onCustomer(String name) {
-        customerName = name;
-    }
-
-    @Override
-    public void onRental(String movieName, double charge) {
-        rentals.put(movieName, charge);
-    }
-
-    @Override
-    public void onTotal(double charge, int points) {
-        totalCharge = charge;
-        totalPoints = points;
-    }
-
-    @Override
-    public String statement() {
-        return null;
-    }
-
-    String getCustomerName() {
-        return customerName;
-    }
-
-    double getChargeOf(String movieName) {
-        return rentals.get(movieName);
-    }
-
-    public int getTotalPoints() {
-        return totalPoints;
-    }
-
-    public double getTotalCharge() {
-        return totalCharge;
     }
 }
