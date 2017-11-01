@@ -25,7 +25,7 @@ function localAdd(a, b) {
 }
 
 function remoteAdd(a, b) {
-    var url = "http://localhost:5000/add?a=3&b=5"
+    var url = "http://localhost:5000/add?a=" + a + "&b=" + b
     var json = "";
     http.get(url, function(res) {
         console.log("Got response: " + res.statusCode);
@@ -43,6 +43,6 @@ function remoteAdd(a, b) {
     return json.result;
 }
 
-console.log(localAdd(2,5));
-//console.log(remoteAdd(3,5));
-remoteAdd(3,5)
+var argv = process.argv.splice(2)
+remoteAdd(argv[0], argv[1])
+//remoteAdd(3,4)

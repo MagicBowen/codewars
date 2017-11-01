@@ -17,8 +17,17 @@ https://maven.java.net/content/repositories/public/com/oracle/libavatar-js-macos
 Tutorial:
 
 http://www.baeldung.com/java-nashorn
+http://wiki.apidesign.org/wiki/AvatarJS
+https://github.com/apigee/trireme
 https://www.infoq.com/articles/nashorn
+https://github.com/coveo/nashorn-commonjs-modules
+https://github.com/rtyler/avatar-js
+https://blogs.oracle.com/java-platform-group/nodejs-and-iojs-on-java
 http://blog.jonasbandi.net/2014/03/running-nodejs-applications-on-jvm-with.html
 https://strongloop.com/strongblog/how-to-run-node-js-on-the-jvm-with-avatar-js-and-loopback/
+https://stackoverflow.com/questions/31008639/embed-avatar-js-in-java-application-example
 http://www.oracle.com/technetwork/articles/java/jf14-nashorn-2126515.html
 https://docs.oracle.com/javase/7/docs/technotes/guides/scripting/programmer_guide/
+https://github.com/pk11/nashorn-websockets-demo
+https://github.com/rahmanusta/Nashorn
+https://github.com/brunoborges/nashorn
