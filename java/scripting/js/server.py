@@ -4,7 +4,6 @@ from flask_restful import Api, Resource
 app = Flask(__name__)
 api = Api(app)
 
-
 class Add(Resource):
     def get(self):
         a = int(request.args.get('a'))
