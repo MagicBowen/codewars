@@ -1,4 +1,4 @@
-'use strict';
+console.log(process.version);
 
 const a = 1;
 const b = '23';
@@ -34,14 +34,14 @@ console.log(`result of foo is ${foo.result}`);
 
 console.log('support let!');
 
-//async function remoteAdd(a, b) {
-//    return a + b;
-//}
-//
-//const result = await remoteAdd('7', 89);
-//
-//console.log(`result of remoteAdd is ${result}`);
+async function remoteAdd(a, b) {
+    return a + b;
+}
 
-//console.log('support async & await!');
+(async () => {
+    let result = await remoteAdd('7', 89);
+    console.log(`result of async add is ${result}`);
+})();
 
-console.log(process.version);
+console.log('support async & await!');
+

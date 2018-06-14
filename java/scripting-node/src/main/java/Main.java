@@ -63,11 +63,69 @@ public class Main {
         nodeJS.release();
     }
 
+    private static void testRequestModuleCallback() {
+        final NodeJS nodeJS = NodeJS.createNodeJS();
+        final V8Object http = nodeJS.require(new File("./js/node-module/index.js"));
+
+        JavaCallback result = new JavaCallback() {
+
+            public Object invoke(V8Object receiver, V8Array parameters) {
+                System.out.println("parameter length is " + parameters.length());
+                V8Object resultObj = parameters.getObject(0);
+                int result = resultObj.getInteger("result");
+                System.out.println("result is " + result);
+                resultObj.release();
+                return null;
+            }
+        };
+
+        V8Object callback = new V8Function(nodeJS.getRuntime(), result);
+
+        http.executeJSFunction("add", 1, 2, callback);
+
+        while(nodeJS.isRunning()) {
+            nodeJS.handleMessage();
+        }
+
+        callback.release();
+        http.release();
+        nodeJS.release();
+    }
+
+    private static void testModifyThis() {
+        final NodeJS nodeJS = NodeJS.createNodeJS();
+        final V8Object doSomething = nodeJS.require(new File("./js/this.js"));
+
+//        JavaCallback result = new JavaCallback() {
+//
+//            public Object invoke(V8Object receiver, V8Array parameters) {
+//                System.out.println("parameter length is " + parameters.length());
+//                V8Object resultObj = parameters.getObject(0);
+//                int result = resultObj.getInteger("result");
+//                System.out.println("result is " + result);
+//                resultObj.release();
+//                return null;
+//            }
+//        };
+//
+//        V8Object callback = new V8Function(nodeJS.getRuntime(), result);
+
+        doSomething.executeJSFunction("doSomething");
+
+        while(nodeJS.isRunning()) {
+            nodeJS.handleMessage();
+        }
+
+        doSomething.release();
+        nodeJS.release();
+    }
+
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-//        invokeJsFile("features");
-//        invokeJsFile("require");
-//        testNodeJsModuleExport();
+        invokeJsFile("features");
+        invokeJsFile("require");
+        testNodeJsModuleExport();
         testHttpModuleCallback();
+        testRequestModuleCallback();
     }
 }
