@@ -53,6 +53,12 @@ func (c BackwardsCommand) run(r *Robot) {
 type Commands struct {
 	commands []Command
 }
+
+func CommandList(commands ...Command) (result Commands) {
+	result.commands = []Command(commands)
+	return result
+}
+
 func (c Commands) run(r *Robot) {
 	for _, command := range c.commands {
 		r.Execute(command)

@@ -59,7 +59,6 @@ func TestRepeatCommand(t *testing.T) {
 }
 
 func TestCommands(t *testing.T) {
-	c := Commands{[]Command{TurnRightCommand{}, ForwardsCommand{8}, TurnRoundCommand{}, BackwardCommand{}}}
-	r := NewRobot().Execute(c)
+	r := NewRobot().Execute(CommandList(TurnRightCommand{}, ForwardsCommand{8}, TurnRoundCommand{}, BackwardCommand{}))
 	assertPosition(r, position{9, 0, West}, t)
 }
