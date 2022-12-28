@@ -17,6 +17,7 @@ public class Game {
         Rule defaultRule = atom(always(true), nop());
 
         Rule rule = anyOf(contains, allOf, defaultRule);
+        
         return rule.apply(n);
     }
 }
