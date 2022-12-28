@@ -1,0 +1,30 @@
+
+
+{
+    "any_of" : [
+        {
+            "matcher" : { "type" : "contains", "number" : 3 },
+            "action"  : { "reply" : "Fizz" }
+        },
+        {
+            "all_of" : [
+                {
+                    "matcher" : { "type" : "times", "number" : 3 },
+                    "action"  : { "reply" : "Fizz" }
+                },
+                {
+                    "matcher" : { "type" : "times", "number" : 5 },
+                    "action"  : { "reply" : "Buzz" }
+                },
+                {
+                    "matcher" : { "type" : "times", "number" : 7 },
+                    "action"  : { "reply" : "Whizz" }
+                }
+            ]
+        },
+        {
+            "matcher" : { "type" : "always" },
+            "action" : { "nop" : true }
+        }
+    ]
+}

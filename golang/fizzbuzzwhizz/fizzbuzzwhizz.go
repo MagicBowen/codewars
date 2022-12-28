@@ -7,15 +7,16 @@ import (
 )
 
 func Apply(n uint) string {
-	fizz := atom(times(3), to("Fizz"))
-	buzz := atom(times(5), to("Buzz"))
-	whizz := atom(times(7), to("Whizz"))
+	fizz := atom(times(3), reply("Fizz"))
+	buzz := atom(times(5), reply("Buzz"))
+	whizz := atom(times(7), reply("Whizz"))
 
-	allOf := allOf(fizz, buzz, whizz)
-	contains := atom(contains(3), to("Fizz"))
-	defaultRule := atom(always(true), nop())
+	times_rule := allOf(fizz, buzz, whizz)
+	contains_rule := atom(contains(3), reply("Fizz"))
+	default_rule := atom(always(true), nop())
 
-	rule := anyOf(contains, allOf, defaultRule)
+	rule := anyOf(contains_rule, times_rule, default_rule)
+
 	return rule(n)	
 }
 
@@ -60,7 +61,7 @@ func allOf(rs ...rule) rule {
 	)
 }
 
-func to(str string) action {
+func reply(str string) action {
 	return action(
 		func (n uint) string {
 			return fmt.Sprintf("%s", str)
