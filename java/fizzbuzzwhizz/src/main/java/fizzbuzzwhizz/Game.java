@@ -7,7 +7,7 @@ import static fizzbuzzwhizz.Matcher.*;
 import static fizzbuzzwhizz.Rule.*;
 
 public class Game {
-    public static String apply(int n) {
+    private static Rule FizzBuzzWhizz() {
         Rule fizz = atom(times(3), to("Fizz"));
         Rule buzz = atom(times(5), to("Buzz"));
         Rule whizz = atom(times(7), to("Whizz"));
@@ -17,7 +17,12 @@ public class Game {
         Rule defaultRule = atom(always(true), nop());
 
         Rule rule = anyOf(contains, allOf, defaultRule);
-        
-        return rule.apply(n);
+        return rule;
+    }
+    public static void main(String[] args) {
+        Rule rule = FizzBuzzWhizz();
+        for (int i = 1; i <= 100; i++) {
+            System.out.println(rule.apply(i));
+        }
     }
 }

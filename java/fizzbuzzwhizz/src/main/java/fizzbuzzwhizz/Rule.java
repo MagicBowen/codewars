@@ -16,7 +16,8 @@ public interface Rule {
     }
 
     static Rule anyOf(Rule... rules) {
-        return n -> stringStream(n, rules).filter(s -> !s.isEmpty()).findFirst().orElse("");
+        return n -> stringStream(n, rules)
+                .filter(s -> !s.isEmpty()).findFirst().orElse("");
     }
 
     static Rule allOf(Rule... rules) {
@@ -26,5 +27,4 @@ public interface Rule {
     static Stream<String> stringStream(int n, Rule[] rules) {
         return Arrays.stream(rules).map(r -> r.apply(n));
     }
-
 }

@@ -1,7 +1,5 @@
-
-
 {
-    "name" : "Bowen's rule",
+    "name" : "FizzBuzzWhizz",
     "rule" : {
         "any_of" : [
             {
@@ -31,3 +29,5 @@
         ]    
     }
 }
+
+
