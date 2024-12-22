@@ -1,178 +1,145 @@
 #include <iostream>
-#include <array>
-#include <string_view>
-#include <utility>
-#include <cstdint>
+#include <string>
+#include <sstream>
 #include <tuple>
+#include <algorithm>
 
-// 定义最大数字
-constexpr uint32_t MAX_NUMBER = 100;
+// Matcher 基类模板
+template <typename T>
+struct Matcher;
 
-// 辅助函数：检查数字是否包含特定的数字
-constexpr bool contains_digit(uint32_t number, char digit) {
-    while (number > 0) {
-        if (number % 10 == (digit - '0')) {
-            return true;
-        }
-        number /= 10;
-    }
-    return false;
-}
-
-// ---------------------- Matcher 定义 ---------------------- //
-
-// 3的倍数匹配器
-struct Times3Matcher {
-    static constexpr bool match(uint32_t n) {
-        return n % 3 == 0;
+// Matcher 实现：判断是否能被某个数整除
+template <unsigned int Divisor>
+struct DivisibleMatcher {
+    constexpr bool match(unsigned int n) const {
+        return n % Divisor == 0;
     }
 };
 
-// 5的倍数匹配器
-struct Times5Matcher {
-    static constexpr bool match(uint32_t n) {
-        return n % 5 == 0;
+// Matcher 实现：判断是否包含某个数字
+template <unsigned int Digit>
+struct ContainsMatcher {
+    bool match(unsigned int n) const {
+        std::string numStr = std::to_string(n);
+        std::string digitStr = std::to_string(Digit);
+        return numStr.find(digitStr) != std::string::npos;
     }
 };
 
-// 7的倍数匹配器
-struct Times7Matcher {
-    static constexpr bool match(uint32_t n) {
-        return n % 7 == 0;
-    }
-};
-
-// 包含数字3的匹配器
-struct Contains3Matcher {
-    static constexpr bool match(uint32_t n) {
-        return contains_digit(n, '3');
-    }
-};
-
-// 总是匹配的匹配器
+// Matcher 实现：始终返回固定值
+template <bool VALUE>
 struct AlwaysMatcher {
-    static constexpr bool match(uint32_t /*n*/) {
-        return true;
+    constexpr bool match(unsigned int /*n*/) const {
+        return VALUE;
     }
 };
 
-// ---------------------- Action 定义 ---------------------- //
+// Action 基类模板
+template <typename T>
+struct Action;
 
-// Fizz动作
-struct FizzAction {
-    static constexpr std::string_view apply(uint32_t /*n*/) {
-        return "Fizz";
+// Action 实现：返回预定义的字符串
+template <const char* Str>
+struct StringAction {
+    std::string act(unsigned int /*n*/) const {
+        return std::string(Str);
     }
 };
 
-// Buzz动作
-struct BuzzAction {
-    static constexpr std::string_view apply(uint32_t /*n*/) {
-        return "Buzz";
+// Action 实现：返回数字本身的字符串
+struct NumberAction {
+    std::string act(unsigned int n) const {
+        return std::to_string(n);
     }
 };
 
-// Whizz动作
-struct WhizzAction {
-    static constexpr std::string_view apply(uint32_t /*n*/) {
-        return "Whizz";
-    }
-};
-
-// 默认动作（返回空字符串，表示需要输出数字本身）
-struct DefaultAction {
-    static constexpr std::string_view apply(uint32_t /*n*/) {
-        return "";
-    }
-};
-
-// ---------------------- Rule 定义 ---------------------- //
-
-// Atom规则：单个Matcher和Action
+// Atom 规则：如果匹配器匹配，则执行动作
 template <typename Matcher, typename Action>
-struct AtomRule {
-    static constexpr std::string_view apply(uint32_t n) {
-        if (Matcher::match(n)) {
-            return Action::apply(n);
+struct Atom {
+    Matcher matcher;
+    Action action;
+
+    std::string apply(unsigned int n) const {
+        if (matcher.match(n)) {
+            return action.act(n);
         }
         return "";
     }
 };
 
-// AnyOf规则：多个Rule中任意一个匹配
+// AnyOf 规则：依次应用子规则，返回第一个非空结果
 template <typename... Rules>
-struct AnyOfRule {
-    static constexpr std::string_view apply(uint32_t n) {
-        std::string_view result = "";
-        ((result.empty() ? (result = Rules::apply(n)) : result), ...);
+struct AnyOf {
+    std::tuple<Rules...> rules;
+
+    std::string apply(unsigned int n) const {
+        return apply_impl(n, std::index_sequence_for<Rules...>{});
+    }
+
+private:
+    template <std::size_t... Is>
+    std::string apply_impl(unsigned int n, std::index_sequence<Is...>) const {
+        std::string result;
+        ((result.empty() ? (result = std::get<Is>(rules).apply(n)) : ""), ...);
         return result;
     }
 };
 
-// AllOf规则：多个Rule全部匹配并组合其输出
+// AllOf 规则：组合多个子规则的结果
 template <typename... Rules>
-struct AllOfRule {
-    static constexpr std::string_view apply(uint32_t n) {
-        std::string_view result = "";
-        ((Rules::Matcher::match(n) ? (result += Rules::Action::apply(n)) : result), ...);
+struct AllOf {
+    std::tuple<Rules...> rules;
+
+    std::string apply(unsigned int n) const {
+        return apply_impl(n, std::index_sequence_for<Rules...>{});
+    }
+
+private:
+    template <std::size_t... Is>
+    std::string apply_impl(unsigned int n, std::index_sequence<Is...>) const {
+        std::string result;
+        ((result += std::get<Is>(rules).apply(n)), ...);
         return result;
     }
 };
 
-// ---------------------- 定义具体规则 ---------------------- //
+// 常量字符串定义
+constexpr char fizzStr[] = "Fizz";
+constexpr char buzzStr[] = "Buzz";
+constexpr char whizzStr[] = "Whizz";
 
-// 包含数字3的规则，优先级最高
-using Contains3Rule = AtomRule<Contains3Matcher, FizzAction>;
+// 定义具体的 Matchers
+using Div3 = DivisibleMatcher<3>;
+using Div5 = DivisibleMatcher<5>;
+using Div7 = DivisibleMatcher<7>;
+using Cont3 = ContainsMatcher<3>;
 
-// 3、5、7倍数的单独规则
-using Times3Rule = AtomRule<Times3Matcher, FizzAction>;
-using Times5Rule = AtomRule<Times5Matcher, BuzzAction>;
-using Times7Rule = AtomRule<Times7Matcher, WhizzAction>;
+// 定义具体的 Atom 规则
+using AtomFizz = Atom<DivisibleMatcher<3>, StringAction<fizzStr>>;
+using AtomBuzz = Atom<DivisibleMatcher<5>, StringAction<buzzStr>>;
+using AtomWhizz = Atom<DivisibleMatcher<7>, StringAction<whizzStr>>;
+using AtomContains3 = Atom<ContainsMatcher<3>, StringAction<fizzStr>>;
+using AtomDefault = Atom<AlwaysMatcher<true>, NumberAction>;
 
-// 组合所有倍数规则
-using MultiplesCombinedRule = AllOfRule<Times3Rule, Times5Rule, Times7Rule>;
-using MultiplesRule = AnyOfRule<
-    Times3Rule,
-    Times5Rule,
-    Times7Rule,
-    AllOfRule<Times3Rule, Times5Rule>,
-    AllOfRule<Times3Rule, Times7Rule>,
-    AllOfRule<Times5Rule, Times7Rule>,
-    MultiplesCombinedRule
+// 定义 AnyOf 主规则，按照优先级顺序
+using FizzBuzzWhizz = AnyOf<
+    AtomContains3,                             // 优先级最高：包含3
+    AllOf<AtomFizz, AtomBuzz, AtomWhizz>,      // 同时是3,5,7的倍数
+    AllOf<AtomFizz, AtomBuzz>,                 // 同时是3和5的倍数
+    AllOf<AtomFizz, AtomWhizz>,                // 同时是3和7的倍数
+    AllOf<AtomBuzz, AtomWhizz>,                // 同时是5和7的倍数
+    AtomFizz,                                  // 单独的3的倍数
+    AtomBuzz,                                  // 单独的5的倍数
+    AtomWhizz,                                 // 单独的7的倍数
+    AtomDefault                                // 默认
 >;
 
-// 默认规则
-using DefaultRule = AtomRule<AlwaysMatcher, DefaultAction>;
-
-// 最终应用规则，优先检查包含规则，其次检查倍数规则，最后是默认规则
-using ApplyRule = AnyOfRule<Contains3Rule, MultiplesRule, DefaultRule>;
-
-// ---------------------- 生成结果数组 ---------------------- //
-
-// 计算单个数字的输出
-constexpr std::string_view compute_output(uint32_t n) {
-    return ApplyRule::apply(n);
-}
-
-// 生成包含1到MAX_NUMBER每个数字对应输出的数组
-template <std::size_t... I>
-constexpr auto generate_results(std::index_sequence<I...>) {
-    return std::array<std::string_view, MAX_NUMBER>{
-        compute_output(I + 1)...
-    };
-}
-
-constexpr auto results = generate_results(std::make_index_sequence<MAX_NUMBER>{});
-
-// ---------------------- 运行时打印结果 ---------------------- //
-
 int main() {
-    for (uint32_t i = 1; i <= MAX_NUMBER; ++i) {
-        if (!results[i - 1].empty()) {
-            std::cout << results[i - 1] << '\n';
-        } else {
-            std::cout << i << '\n';
-        }
+    FizzBuzzWhizz fbw;
+
+    for (unsigned int i = 1; i <= 100; ++i) {
+        std::cout << fbw.apply(i) << std::endl;
     }
+
     return 0;
 }
